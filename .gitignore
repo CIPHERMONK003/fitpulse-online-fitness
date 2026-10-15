@@ -1,0 +1,33 @@
+# Build artifacts
+target/
+*.class
+
+# Binaries & Executables
+cloudflared.exe
+*.exe
+
+# Dependency reduced pom (created by maven-shade-plugin)
+dependency-reduced-pom.xml
+
+# Embedded Database files
+fitness_db*
+*.mv.db
+*.lock.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Operating System files
+Thumbs.db
+.DS_Store

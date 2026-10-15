@@ -1,0 +1,6 @@
+target/
+.git/
+*.log
+fitness_db*
+.idea/
+*.iml

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  fitpulse-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fitpulse-global-app:latest
+    container_name: fitpulse-global-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+    volumes:
+      - fitpulse-data:/app/data
+
+volumes:
+  fitpulse-data:
+    driver: local

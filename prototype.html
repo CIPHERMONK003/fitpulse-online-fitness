@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FitPulse - Online Fitness Coaching Interactive Prototype</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen p-4 md:p-8">
+
+  <!-- Top Navigation & Role Switcher -->
+  <header class="max-w-6xl mx-auto mb-6 flex flex-col md:flex-row items-center justify-between gap-4 bg-[var(--card)] p-4 rounded-2xl border border-[var(--border)] shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-white text-xl font-bold shadow-md">
+        ⚡
+      </div>
+      <div>
+        <h1 class="text-xl font-extrabold tracking-tight">FitPulse</h1>
+        <p class="text-xs text-[var(--muted-foreground)]">Online Fitness Coaching Platform • Pure Java Enterprise Prototype</p>
+      </div>
+    </div>
+
+    <!-- Interactive Role Simulator Switcher -->
+    <div class="flex items-center gap-2 bg-[var(--background)] p-1.5 rounded-xl border border-[var(--border)]">
+      <span class="text-xs font-semibold px-2 text-[var(--muted-foreground)]">Simulate Role:</span>
+      <button onclick="switchRole('client')" id="btn-client" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm">
+        Client (Alice)
+      </button>
+      <button onclick="switchRole('coach')" id="btn-coach" class="px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-all">
+        Coach (Sarah)
+      </button>
+      <button onclick="switchRole('admin')" id="btn-admin" class="px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-all">
+        Admin (Console)
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl mx-auto space-y-6">
+
+    <!-- ========================================================================= -->
+    <!-- CLIENT PORTAL VIEW                                                        -->
+    <!-- ========================================================================= -->
+    <div id="view-client" class="space-y-6">
+      
+      <!-- Hero Banner -->
+      <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 border border-indigo-700/40 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-2 uppercase tracking-wide">
+              Active Member
+            </span>
+            <h2 class="text-2xl md:text-3xl font-black">Welcome back, Alice Green! 🏃‍♀️</h2>
+            <p class="text-indigo-200 text-sm mt-1">Goal: <span class="font-semibold text-white">Weight Loss & Tone</span> • Assigned Coach: <span class="font-semibold text-cyan-300">Coach Mike Reynolds</span></p>
+          </div>
+          <div class="bg-slate-900/80 backdrop-blur border border-indigo-500/30 px-4 py-2.5 rounded-xl text-right">
+            <span class="text-xs text-indigo-300 uppercase tracking-wider block">Live BMI Score</span>
+            <span id="client-bmi-val" class="text-xl font-black text-emerald-400">22.8</span>
+            <span id="client-bmi-cat" class="text-xs text-emerald-300 ml-1 font-semibold">(Normal Weight)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)] shadow-sm">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">Current Weight</p>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="client-weight-val" class="text-2xl font-black">71.6</span>
+            <span class="text-xs text-[var(--muted-foreground)]">kg</span>
+          </div>
+          <p class="text-xs text-cyan-500 mt-1 font-medium">Target: 62.0 kg</p>
+        </div>
+
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)] shadow-sm">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">Workouts Logged</p>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="client-workouts-count" class="text-2xl font-black">3</span>
+            <span class="text-xs text-[var(--muted-foreground)]">sessions</span>
+          </div>
+          <p class="text-xs text-emerald-500 mt-1 font-medium">Consistent streak</p>
+        </div>
+
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)] shadow-sm">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">Calories Burned</p>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="client-calories-total" class="text-2xl font-black">1,080</span>
+            <span class="text-xs text-[var(--muted-foreground)]">kcal</span>
+          </div>
+          <p class="text-xs text-amber-500 mt-1 font-medium">Thread-safe Aggregation</p>
+        </div>
+
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)] shadow-sm">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">Active Plan</p>
+          <p id="client-active-plan-badge" class="text-sm font-bold text-indigo-400 mt-2 truncate">5K Aerobic Endurance</p>
+          <p class="text-xs text-[var(--muted-foreground)] mt-0.5">Cardiovascular Plan</p>
+        </div>
+      </div>
+
+      <!-- Two-Column Section: Interactive Workout Logger & Canvas Chart -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Interactive Workout Logger (OOP Polymorphic Calorie Calculator) -->
+        <div class="lg:col-span-6 bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+            <h3 class="font-bold text-base flex items-center gap-2">
+              <span>⏱️</span> Log Workout & Calculate Burn (OOP)
+            </h3>
+            <span class="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-mono">calculateCalories()</span>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-[var(--muted-foreground)] block mb-1">Select Workout Plan Type</label>
+              <select id="log-plan-type" onchange="recalculateInteractiveCalories()" class="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500">
+                <option value="CARDIO">CardioWorkoutPlan (5K Aerobic Base - Zone 2)</option>
+                <option value="STRENGTH">StrengthWorkoutPlan (Full Body Accelerator - 4 Sets x 10)</option>
+                <option value="HIIT">HIITWorkoutPlan (Metabolic Inferno - EPOC 45s/15s)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-[var(--muted-foreground)] block mb-1">Duration (Minutes)</label>
+                <input type="number" id="log-duration" value="40" min="5" max="180" oninput="recalculateInteractiveCalories()" class="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-[var(--muted-foreground)] block mb-1">Current Weight (kg)</label>
+                <input type="number" id="log-weight" value="71.6" step="0.2" oninput="recalculateInteractiveCalories()" class="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500">
+              </div>
+            </div>
+
+            <!-- Dynamic Polymorphic Estimated Calorie Output -->
+            <div class="bg-[var(--background)] p-3 rounded-xl border border-[var(--border)] flex items-center justify-between">
+              <div>
+                <span class="text-xs text-[var(--muted-foreground)] block font-medium">Polymorphic Estimated Burn</span>
+                <span id="log-formula-tag" class="text-xs text-indigo-400 font-mono">MET: Aerobic Zone 2</span>
+              </div>
+              <div class="text-right">
+                <span id="log-cal-calc" class="text-2xl font-black text-amber-400">320</span>
+                <span class="text-xs text-amber-300 font-bold ml-0.5">kcal</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-[var(--muted-foreground)] block mb-1">Session Notes / Coach Feedback</label>
+              <input type="text" id="log-notes" placeholder="Steady breathing throughout, felt great!" class="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <button onclick="commitWorkoutLog()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm transition-all shadow-md active:scale-98">
+              Commit Workout to JDBC Database & Notify Coach
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-time Progress Chart (Canvas) -->
+        <div class="lg:col-span-6 bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 mb-3">
+            <h3 class="font-bold text-base flex items-center gap-2">
+              <span>📈</span> Calorie Burn History Trend
+            </h3>
+            <span class="text-xs text-[var(--muted-foreground)] font-mono">Canvas Live API</span>
+          </div>
+
+          <div class="relative w-full h-52 bg-[var(--background)] rounded-xl border border-[var(--border)] p-2 flex items-center justify-center">
+            <canvas id="progressCanvas" width="480" height="200" class="w-full h-full"></canvas>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)] mt-3 pt-2 border-t border-[var(--border)]">
+            <span>Session 1: 330 kcal</span>
+            <span>Session 2: 350 kcal</span>
+            <span class="text-emerald-400 font-semibold" id="latest-burn-label">Session 3: 400 kcal</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Coach Feedback Stream -->
+      <div class="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm space-y-3">
+        <h3 class="font-bold text-base flex items-center gap-2">
+          <span>💬</span> Messages & Advice from Coach Mike
+        </h3>
+        <div id="coach-messages-container" class="space-y-2">
+          <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)] flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-xs text-cyan-400">Coach Mike Reynolds</span>
+                <span class="text-xs bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-bold">★ 5/5 Rating</span>
+              </div>
+              <p class="text-xs text-[var(--foreground)] mt-1">"Superb pacing on your recent runs, Alice! Remember to hydrate thoroughly and stretch your hamstrings."</p>
+              <p class="text-[11px] text-[var(--muted-foreground)] mt-1 font-medium">Recommendation: Continue 5K Aerobic Endurance; add 5 min cool-down walks.</p>
+            </div>
+            <span class="text-[11px] text-[var(--muted-foreground)]">Today, 08:30 AM</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- COACH PORTAL VIEW                                                         -->
+    <!-- ========================================================================= -->
+    <div id="view-coach" class="hidden space-y-6">
+      
+      <div class="bg-gradient-to-r from-cyan-950 via-slate-900 to-cyan-900 border border-cyan-700/40 rounded-2xl p-6 text-white shadow-lg">
+        <h2 class="text-2xl font-black">Coach Console: Sarah Jenkins 🏆</h2>
+        <p class="text-cyan-200 text-sm mt-1">Specialization: <span class="font-semibold text-white">Strength & Hypertrophy Conditioning</span> • Rating: <span class="font-semibold text-amber-400">★ 4.9/5.0</span></p>
+      </div>
+
+      <!-- Assigned Clients Roster -->
+      <div class="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm space-y-4">
+        <h3 class="font-bold text-base flex items-center gap-2">
+          <span>👥</span> Assigned Clients Roster
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)] uppercase">
+                <th class="py-2.5 px-3">Client</th>
+                <th class="py-2.5 px-3">Goal</th>
+                <th class="py-2.5 px-3">Weight</th>
+                <th class="py-2.5 px-3">Enrolled Regimen</th>
+                <th class="py-2.5 px-3">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--border)]">
+              <tr>
+                <td class="py-3 px-3 font-semibold">Bob Martin</td>
+                <td class="py-3 px-3 text-[var(--muted-foreground)]">Muscle Hypertrophy</td>
+                <td class="py-3 px-3">80.0 kg</td>
+                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 font-semibold">Strength Accelerator</span></td>
+                <td class="py-3 px-3">
+                  <button onclick="openCoachFeedbackModal('Bob Martin')" class="px-2.5 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded font-medium">Send Advice</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-semibold">Alice Green</td>
+                <td class="py-3 px-3 text-[var(--muted-foreground)]">Weight Loss & Cardio</td>
+                <td class="py-3 px-3" id="coach-view-alice-weight">71.6 kg</td>
+                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-semibold">5K Aerobic Base</span></td>
+                <td class="py-3 px-3">
+                  <button onclick="openCoachFeedbackModal('Alice Green')" class="px-2.5 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded font-medium">Send Advice</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Author New Workout Plan Form -->
+      <div class="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm space-y-4 max-w-2xl">
+        <h3 class="font-bold text-base flex items-center gap-2">
+          <span>➕</span> Publish New Workout Plan (Polymorphic Model)
+        </h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-[var(--muted-foreground)] block mb-1">Plan Title</label>
+            <input type="text" id="coach-new-title" value="Kettlebell Core & Mobility" class="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-sm">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-[var(--muted-foreground)] block mb-1">Type Hierarchy</label>
+            <select id="coach-new-type" class="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-sm">
+              <option value="STRENGTH">StrengthWorkoutPlan</option>
+              <option value="CARDIO">CardioWorkoutPlan</option>
+              <option value="HIIT">HIITWorkoutPlan</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="alert('✓ Workout Plan published to JDBC Database and added to catalog!')" class="py-2 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl text-xs">
+          Save & Publish to Client Catalog
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ADMIN CONSOLE VIEW                                                        -->
+    <!-- ========================================================================= -->
+    <div id="view-admin" class="hidden space-y-6">
+      
+      <div class="bg-gradient-to-r from-rose-950 via-slate-900 to-rose-900 border border-rose-700/40 rounded-2xl p-6 text-white shadow-lg">
+        <h2 class="text-2xl font-black">System Administrator Console 🛡️</h2>
+        <p class="text-rose-200 text-sm mt-1">Live Multi-threading Worker & JDBC Transaction Supervision</p>
+      </div>
+
+      <!-- Live Concurrency Diagnostic Counters -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)]">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">Active Sessions</p>
+          <span class="text-2xl font-black text-rose-400 mt-1 block">1</span>
+          <span class="text-xs text-[var(--muted-foreground)] font-mono">AtomicInteger</span>
+        </div>
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)]">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">Worker Queue</p>
+          <span id="admin-queue-val" class="text-2xl font-black text-amber-400 mt-1 block">0 pending</span>
+          <span class="text-xs text-[var(--muted-foreground)] font-mono">BlockingQueue&lt;Task&gt;</span>
+        </div>
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)]">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">Total Requests</p>
+          <span id="admin-req-val" class="text-2xl font-black text-cyan-400 mt-1 block">14</span>
+          <span class="text-xs text-[var(--muted-foreground)] font-mono">AtomicLong (Filter)</span>
+        </div>
+        <div class="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)]">
+          <p class="text-xs font-semibold text-[var(--muted-foreground)] uppercase">JDBC Status</p>
+          <span class="text-sm font-bold text-emerald-400 mt-2 block">10 Connections Pool</span>
+          <span class="text-xs text-[var(--muted-foreground)] font-mono">PostgreSQL/H2</span>
+        </div>
+      </div>
+
+      <!-- User Account Moderation Table -->
+      <div class="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm space-y-4">
+        <h3 class="font-bold text-base flex items-center gap-2">
+          <span>👥</span> User Account Moderation
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)] uppercase">
+                <th class="py-2.5 px-3">User ID</th>
+                <th class="py-2.5 px-3">Name</th>
+                <th class="py-2.5 px-3">Role</th>
+                <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3">Moderation Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--border)]">
+              <tr>
+                <td class="py-2.5 px-3 font-mono">#1</td>
+                <td class="py-2.5 px-3 font-semibold">Administrator</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 font-bold">ADMIN</span></td>
+                <td class="py-2.5 px-3 text-emerald-400 font-bold">ACTIVE</td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">System User</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono">#2</td>
+                <td class="py-2.5 px-3 font-semibold">Sarah Jenkins</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-bold">COACH</span></td>
+                <td class="py-2.5 px-3 text-emerald-400 font-bold">ACTIVE</td>
+                <td class="py-2.5 px-3">
+                  <button onclick="toggleUserStatusMock(this)" class="px-2 py-1 rounded bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600/30">Deactivate</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono">#4</td>
+                <td class="py-2.5 px-3 font-semibold">Alice Green</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold">CLIENT</span></td>
+                <td class="py-2.5 px-3 text-emerald-400 font-bold">ACTIVE</td>
+                <td class="py-2.5 px-3">
+                  <button onclick="toggleUserStatusMock(this)" class="px-2 py-1 rounded bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600/30">Deactivate</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    let calorieHistory = [330, 350, 400];
+    let totalWorkouts = 3;
+    let totalCalories = 1080;
+
+    function switchRole(role) {
+      document.getElementById('view-client').classList.add('hidden');
+      document.getElementById('view-coach').classList.add('hidden');
+      document.getElementById('view-admin').classList.add('hidden');
+
+      const btnClient = document.getElementById('btn-client');
+      const btnCoach = document.getElementById('btn-coach');
+      const btnAdmin = document.getElementById('btn-admin');
+
+      const activeClass = 'bg-indigo-600 text-white font-bold shadow-sm';
+      const inactiveClass = 'text-[var(--muted-foreground)] font-medium';
+
+      [btnClient, btnCoach, btnAdmin].forEach(b => {
+        b.className = 'px-3 py-1.5 rounded-lg text-xs transition-all ' + inactiveClass;
+      });
+
+      if (role === 'client') {
+        document.getElementById('view-client').classList.remove('hidden');
+        btnClient.className = 'px-3 py-1.5 rounded-lg text-xs transition-all ' + activeClass;
+      } else if (role === 'coach') {
+        document.getElementById('view-coach').classList.remove('hidden');
+        btnCoach.className = 'px-3 py-1.5 rounded-lg text-xs transition-all ' + activeClass;
+      } else {
+        document.getElementById('view-admin').classList.remove('hidden');
+        btnAdmin.className = 'px-3 py-1.5 rounded-lg text-xs transition-all ' + activeClass;
+      }
+    }
+
+    function recalculateInteractiveCalories() {
+      const type = document.getElementById('log-plan-type').value;
+      const duration = parseFloat(document.getElementById('log-duration').value) || 30;
+      const weight = parseFloat(document.getElementById('log-weight').value) || 70;
+      
+      let met = 7.0;
+      let tag = "MET: Aerobic Pace";
+
+      if (type === 'STRENGTH') {
+        met = 5.5 * 1.25; // Resistance & muscle factor
+        tag = "Strength: 4 Sets x 10 Load Formula";
+      } else if (type === 'CARDIO') {
+        met = 8.0; // Zone 2 aerobic
+        tag = "Cardio: 5K Distance & Heart Rate Formula";
+      } else if (type === 'HIIT') {
+        met = 11.0 * 1.20; // High intensity + EPOC afterburn
+        tag = "HIIT: 45s Work / 15s Rest + 20% EPOC";
+      }
+
+      const burned = Math.round((met * 3.5 * weight / 200.0) * duration);
+      document.getElementById('log-cal-calc').innerText = burned;
+      document.getElementById('log-formula-tag').innerText = tag;
+
+      // Update BMI in real time
+      const heightM = 1.68;
+      const bmi = (weight / (heightM * heightM)).toFixed(1);
+      document.getElementById('client-bmi-val').innerText = bmi;
+      document.getElementById('client-weight-val').innerText = weight.toFixed(1);
+      document.getElementById('coach-view-alice-weight').innerText = weight.toFixed(1) + " kg";
+    }
+
+    function commitWorkoutLog() {
+      const burned = parseInt(document.getElementById('log-cal-calc').innerText) || 350;
+      totalWorkouts++;
+      totalCalories += burned;
+
+      document.getElementById('client-workouts-count').innerText = totalWorkouts;
+      document.getElementById('client-calories-total').innerText = totalCalories.toLocaleString();
+      document.getElementById('latest-burn-label').innerText = `Session ${totalWorkouts}: ${burned} kcal`;
+
+      calorieHistory.push(burned);
+      if (calorieHistory.length > 6) calorieHistory.shift();
+      drawChart();
+
+      // Simulate background worker notification dispatch
+      const container = document.getElementById('coach-messages-container');
+      const div = document.createElement('div');
+      div.className = "p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/40 flex items-start justify-between animate-pulse";
+      div.innerHTML = `
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-xs text-emerald-400">⚡ Notification Queue Worker</span>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-1 py-0.5 rounded font-mono">Dispatched</span>
+          </div>
+          <p class="text-xs text-white mt-1">Logged ${burned} kcal workout successfully! Synced with thread-safe PlatformMetricsManager.</p>
+        </div>
+        <span class="text-[10px] text-indigo-300">Just now</span>
+      `;
+      container.prepend(div);
+      setTimeout(() => div.classList.remove('animate-pulse'), 1500);
+
+      alert(`✓ Workout logged! ${burned} kcal registered to JDBC database and multithreaded queue.`);
+    }
+
+    function drawChart() {
+      const canvas = document.getElementById('progressCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw Grid Lines
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.15)";
+      ctx.lineWidth = 1;
+      for (let y = 30; y < h; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(30, y);
+        ctx.lineTo(w - 20, y);
+        ctx.stroke();
+      }
+
+      if (calorieHistory.length === 0) return;
+
+      const maxVal = Math.max(...calorieHistory, 500);
+      const stepX = (w - 70) / Math.max(1, calorieHistory.length - 1);
+
+      // Gradient Fill
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "rgba(99, 102, 241, 0.4)");
+      grad.addColorStop(1, "rgba(99, 102, 241, 0.0)");
+
+      ctx.beginPath();
+      calorieHistory.forEach((val, i) => {
+        const x = 40 + i * stepX;
+        const y = h - 30 - (val / maxVal) * (h - 60);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      // Close path for fill
+      const lastX = 40 + (calorieHistory.length - 1) * stepX;
+      ctx.lineTo(lastX, h - 30);
+      ctx.lineTo(40, h - 30);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Stroke Line
+      ctx.beginPath();
+      calorieHistory.forEach((val, i) => {
+        const x = 40 + i * stepX;
+        const y = h - 30 - (val / maxVal) * (h - 60);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = "#818cf8";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Points & Labels
+      calorieHistory.forEach((val, i) => {
+        const x = 40 + i * stepX;
+        const y = h - 30 - (val / maxVal) * (h - 60);
+
+        ctx.fillStyle = "#4f46e5";
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "#cbd5e1";
+        ctx.font = "10px sans-serif";
+        ctx.fillText(val + " kcal", x - 18, y - 10);
+      });
+    }
+
+    function openCoachFeedbackModal(clientName) {
+      const msg = prompt(`Enter coach feedback message for ${clientName}:`, "Great persistence this week! Make sure to keep your protein intake high.");
+      if (msg) {
+        alert(`✓ Message dispatched to ${clientName} via asynchronous NotificationTask queue!`);
+      }
+    }
+
+    function toggleUserStatusMock(btn) {
+      if (btn.innerText === "Deactivate") {
+        btn.innerText = "Activate";
+        btn.className = "px-2 py-1 rounded bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/30";
+        btn.parentElement.previousElementSibling.innerText = "INACTIVE";
+        btn.parentElement.previousElementSibling.className = "py-2.5 px-3 text-rose-400 font-bold";
+      } else {
+        btn.innerText = "Deactivate";
+        btn.className = "px-2 py-1 rounded bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600/30";
+        btn.parentElement.previousElementSibling.innerText = "ACTIVE";
+        btn.parentElement.previousElementSibling.className = "py-2.5 px-3 text-emerald-400 font-bold";
+      }
+    }
+
+    window.addEventListener('load', () => {
+      recalculateInteractiveCalories();
+      drawChart();
+    });
+  </script>
+
+</body>
+</html>
