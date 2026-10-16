@@ -249,6 +249,48 @@ public class DatabaseManager {
                         "  details VARCHAR(1000)," +
                         "  ip_address VARCHAR(50)," +
                         "  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                        ")",
+
+                // Spa & Wellness specialized plan table
+                "CREATE TABLE IF NOT EXISTS spa_plans (" +
+                        "  plan_id INT PRIMARY KEY," +
+                        "  spa_category VARCHAR(100)," +
+                        "  relaxation_score INT DEFAULT 8," +
+                        "  benefits VARCHAR(500)," +
+                        "  room_type VARCHAR(100)," +
+                        "  temperature_c " + dbl + " DEFAULT 37.0," +
+                        "  aromatherapy_oil VARCHAR(100)," +
+                        "  FOREIGN KEY (plan_id) REFERENCES workout_plans(id) ON DELETE CASCADE" +
+                        ")",
+
+                // Session Slots table for real-time slot booking
+                "CREATE TABLE IF NOT EXISTS session_slots (" +
+                        "  " + idCol + "," +
+                        "  session_type VARCHAR(50) NOT NULL," +
+                        "  title VARCHAR(150) NOT NULL," +
+                        "  coach_id INT," +
+                        "  session_date VARCHAR(20) NOT NULL," +
+                        "  start_time VARCHAR(20) NOT NULL," +
+                        "  end_time VARCHAR(20) NOT NULL," +
+                        "  max_capacity INT NOT NULL DEFAULT 1," +
+                        "  booked_count INT NOT NULL DEFAULT 0," +
+                        "  room_location VARCHAR(100)," +
+                        "  price_credits INT DEFAULT 0," +
+                        "  is_active BOOLEAN DEFAULT TRUE," +
+                        "  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                        "  FOREIGN KEY (coach_id) REFERENCES users(id) ON DELETE SET NULL" +
+                        ")",
+
+                // Slot Bookings table
+                "CREATE TABLE IF NOT EXISTS slot_bookings (" +
+                        "  " + idCol + "," +
+                        "  slot_id INT NOT NULL," +
+                        "  client_id INT NOT NULL," +
+                        "  status VARCHAR(20) DEFAULT 'CONFIRMED'," +
+                        "  notes VARCHAR(500)," +
+                        "  booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                        "  FOREIGN KEY (slot_id) REFERENCES session_slots(id) ON DELETE CASCADE," +
+                        "  FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE" +
                         ")"
         };
 
@@ -260,6 +302,7 @@ public class DatabaseManager {
                 }
             }
             System.out.println("[JDBC] Database schema verified and initialized.");
+            seedSessionSlotsIfEmpty(conn);
         } finally {
             releaseConnection(conn);
         }
@@ -499,6 +542,190 @@ public class DatabaseManager {
             ps.setInt(4, durationMin);
             ps.setDouble(5, cal);
             ps.setString(6, notes);
+            ps.executeUpdate();
+        }
+    }
+
+    public void seedSessionSlotsIfEmpty(Connection conn) {
+        try {
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM session_slots")) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return; // Already seeded
+                }
+            }
+
+            Integer coachSarah = findUserIdByEmail(conn, "sarah.coach@fitness.com");
+            Integer coachMarcus = findUserIdByEmail(conn, "marcus.coach@fitness.com");
+            Integer therapistMaya = findUserIdByEmail(conn, "maya.therapist@fitness.com");
+            Integer coachElena = findUserIdByEmail(conn, "elena.coach@fitness.com");
+            Integer coachDavid = findUserIdByEmail(conn, "david.coach@fitness.com");
+
+            if (therapistMaya == null) {
+                therapistMaya = insertUser(conn, "Therapist Maya Patel", "maya.therapist@fitness.com",
+                        PasswordUtil.hashPassword("coach123"), "COACH");
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO coach_profiles (user_id, specialization, certification, experience_years, rating, bio) VALUES (?, ?, ?, ?, ?, ?)")) {
+                    ps.setInt(1, therapistMaya);
+                    ps.setString(2, "Licensed Spa, Cryo & Hydrotherapy Recovery Specialist");
+                    ps.setString(3, "LMT, NCBTMB Certified");
+                    ps.setInt(4, 9);
+                    ps.setDouble(5, 5.0);
+                    ps.setString(6, "Specializing in athletic muscle restoration, deep tissue myofascial release, and contrast hydrotherapy.");
+                    ps.executeUpdate();
+                }
+            }
+
+            if (coachMarcus == null) {
+                coachMarcus = insertUser(conn, "Coach Marcus Thorne", "marcus.coach@fitness.com",
+                        PasswordUtil.hashPassword("coach123"), "COACH");
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO coach_profiles (user_id, specialization, certification, experience_years, rating, bio) VALUES (?, ?, ?, ?, ?, ?)")) {
+                    ps.setInt(1, coachMarcus);
+                    ps.setString(2, "HIIT & Tactical Conditioning");
+                    ps.setString(3, "CrossFit L3, CSCS");
+                    ps.setInt(4, 6);
+                    ps.setDouble(5, 4.9);
+                    ps.setString(6, "High-intensity athletic conditioning, kettlebell power, and metabolic acceleration.");
+                    ps.executeUpdate();
+                }
+            }
+
+            if (coachElena == null) {
+                coachElena = insertUser(conn, "Coach Elena Rostova", "elena.coach@fitness.com",
+                        PasswordUtil.hashPassword("coach123"), "COACH");
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO coach_profiles (user_id, specialization, certification, experience_years, rating, bio) VALUES (?, ?, ?, ?, ?, ?)")) {
+                    ps.setInt(1, coachElena);
+                    ps.setString(2, "Master Yoga, Mobility & Postural Alignment");
+                    ps.setString(3, "E-RYT 500, FMS Certified");
+                    ps.setInt(4, 8);
+                    ps.setDouble(5, 4.9);
+                    ps.setString(6, "Expert in spinal decompressive yoga, deep hip mobility, and mindful athletic recovery.");
+                    ps.executeUpdate();
+                }
+            }
+
+            if (coachDavid == null) {
+                coachDavid = insertUser(conn, "Coach David Vance", "david.coach@fitness.com",
+                        PasswordUtil.hashPassword("coach123"), "COACH");
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO coach_profiles (user_id, specialization, certification, experience_years, rating, bio) VALUES (?, ?, ?, ?, ?, ?)")) {
+                    ps.setInt(1, coachDavid);
+                    ps.setString(2, "Endurance Running & VO2 Max Coaching");
+                    ps.setString(3, "USATF, UESCA Ultra Running");
+                    ps.setInt(4, 7);
+                    ps.setDouble(5, 4.8);
+                    ps.setString(6, "Marathoner and endurance physiologist optimizing aerobic thresholds and running biomechanics.");
+                    ps.executeUpdate();
+                }
+            }
+
+            // Seed Spa Plans
+            int spaPlan1 = insertPlan(conn, therapistMaya, "Nordic Contrast Hydrotherapy & Finnish Sauna",
+                    "Alternating 80°C Finnish dry sauna with 10°C sub-zero cold plunge pools to induce vascular flushing and deep parasympathetic recovery.",
+                    "SPA_WELLNESS", "BEGINNER", 4, 60, 240.0);
+            insertSpaPlan(conn, spaPlan1, "Hydrotherapy & Sauna", 9, "Vascular flushing, cortisol reduction, lactic clearance", "Nordic Thermal Bath Suite", 82.0, "Nordic Pine & Eucalyptus");
+
+            int spaPlan2 = insertPlan(conn, therapistMaya, "Swedish Deep Tissue Muscle Reset",
+                    "60-minute targeted deep pressure therapy with heated basalt stones, myofascial trigger point release, and organic lavender botanicals.",
+                    "SPA_WELLNESS", "BEGINNER", 2, 60, 180.0);
+            insertSpaPlan(conn, spaPlan2, "Deep Tissue Massage", 10, "Fascial realignment, muscle knot dissolution, joint mobility", "Zen Luxury Suite 1", 37.5, "French Lavender & Arnica");
+
+            int spaPlan3 = insertPlan(conn, therapistMaya, "Sub-Zero Whole Body Cryotherapy (-110°C)",
+                    "3-minute liquid nitrogen vapor immersion triggering acute vasoconstriction, systemic anti-inflammatory endorphin rush, and tissue repair.",
+                    "SPA_WELLNESS", "INTERMEDIATE", 3, 20, 290.0);
+            insertSpaPlan(conn, spaPlan3, "Cryotherapy", 8, "Acute inflammation suppression, metabolic rate surge, endorphin elevation", "Cryo Recovery Chamber A", -110.0, "Menthol & Peppermint");
+
+            // Seed Session Slots
+            int slot1 = insertSlot(conn, "SPA", "Swedish Deep Tissue Recovery Massage", therapistMaya, "Today", "10:00 AM", "11:00 AM", 1, 0, "Zen Luxury Suite 1", 50);
+            int slot2 = insertSlot(conn, "SPA", "Nordic Contrast Hydrotherapy & Sauna Soak", therapistMaya, "Today", "02:00 PM", "03:00 PM", 6, 2, "Nordic Thermal Bath Suite", 35);
+            int slot3 = insertSlot(conn, "SPA", "Sub-Zero Whole Body Cryo Therapy Session", therapistMaya, "Tomorrow", "11:30 AM", "12:00 PM", 2, 1, "Cryo Recovery Chamber A", 45);
+            int slot4 = insertSlot(conn, "SPA", "Hot Basalt Stone Spinal Release Therapy", therapistMaya, "Tomorrow", "04:30 PM", "05:30 PM", 1, 0, "Zen Luxury Suite 2", 55);
+
+            int slot5 = insertSlot(conn, "COACHING", "1-on-1 Olympic Barbell Technique & Form Clinic", coachSarah, "Today", "09:00 AM", "10:00 AM", 1, 0, "Powerlifting Platform 1", 60);
+            int slot6 = insertSlot(conn, "COACHING", "Tactical HIIT Athletic Conditioning (Small Group)", coachMarcus, "Today", "05:30 PM", "06:30 PM", 8, 4, "Functional Turf Arena", 30);
+            int slot7 = insertSlot(conn, "COACHING", "Spinal Decompression & Vinyasa Flow Yoga", coachElena, "Tomorrow", "08:00 AM", "09:00 AM", 12, 6, "Harmony Sky Studio", 25);
+            int slot8 = insertSlot(conn, "COACHING", "Endurance VO2 Max Aerobic Threshold Run", coachDavid, "Tomorrow", "06:00 PM", "07:00 PM", 6, 2, "Indoor High-Speed Track", 35);
+
+            // Seed sample bookings for clients
+            Integer clientAlice = findUserIdByEmail(conn, "alice.client@fitness.com");
+            Integer clientBob = findUserIdByEmail(conn, "bob.client@fitness.com");
+            if (clientAlice != null) {
+                insertBooking(conn, slot2, clientAlice, "CONFIRMED", "Looking forward to recovery after running training.");
+                insertBooking(conn, slot7, clientAlice, "CONFIRMED", "Morning mobility practice.");
+            }
+            if (clientBob != null) {
+                insertBooking(conn, slot2, clientBob, "CONFIRMED", "Post heavy squat day soak.");
+                insertBooking(conn, slot6, clientBob, "CONFIRMED", "MetCon conditioning.");
+            }
+
+            System.out.println("[JDBC] Seeded Spa plans, diverse coaches, and real-time session slots successfully.");
+        } catch (SQLException e) {
+            System.err.println("[JDBC] Warning during session slot seeding: " + e.getMessage());
+        }
+    }
+
+    private Integer findUserIdByEmail(Connection conn, String email) throws SQLException {
+        String sql = "SELECT id FROM users WHERE email = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        return null;
+    }
+
+    private void insertSpaPlan(Connection conn, int planId, String cat, int relaxScore,
+                               String benefits, String room, double tempC, String oil) throws SQLException {
+        String sql = "INSERT INTO spa_plans (plan_id, spa_category, relaxation_score, benefits, room_type, temperature_c, aromatherapy_oil) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, planId);
+            ps.setString(2, cat);
+            ps.setInt(3, relaxScore);
+            ps.setString(4, benefits);
+            ps.setString(5, room);
+            ps.setDouble(6, tempC);
+            ps.setString(7, oil);
+            ps.executeUpdate();
+        }
+    }
+
+    private int insertSlot(Connection conn, String type, String title, Integer coachId,
+                           String date, String start, String end, int maxCap, int booked,
+                           String room, int price) throws SQLException {
+        String sql = "INSERT INTO session_slots (session_type, title, coach_id, session_date, start_time, end_time, max_capacity, booked_count, room_location, price_credits) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, type);
+            ps.setString(2, title);
+            if (coachId != null) {
+                ps.setInt(3, coachId);
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
+            ps.setString(4, date);
+            ps.setString(5, start);
+            ps.setString(6, end);
+            ps.setInt(7, maxCap);
+            ps.setInt(8, booked);
+            ps.setString(9, room);
+            ps.setInt(10, price);
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        throw new SQLException("Failed to retrieve generated slot ID");
+    }
+
+    private void insertBooking(Connection conn, int slotId, int clientId, String status, String notes) throws SQLException {
+        String sql = "INSERT INTO slot_bookings (slot_id, client_id, status, notes) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, slotId);
+            ps.setInt(2, clientId);
+            ps.setString(3, status);
+            ps.setString(4, notes);
             ps.executeUpdate();
         }
     }

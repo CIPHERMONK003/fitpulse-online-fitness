@@ -119,6 +119,8 @@ public class ClientServlet extends HttpServlet {
         out.println("                <option value=\"STRENGTH\"" + ("STRENGTH".equalsIgnoreCase(typeStr) ? " selected" : "") + ">Strength</option>");
         out.println("                <option value=\"CARDIO\"" + ("CARDIO".equalsIgnoreCase(typeStr) ? " selected" : "") + ">Cardio</option>");
         out.println("                <option value=\"HIIT\"" + ("HIIT".equalsIgnoreCase(typeStr) ? " selected" : "") + ">HIIT</option>");
+        out.println("                <option value=\"SPA_WELLNESS\"" + ("SPA_WELLNESS".equalsIgnoreCase(typeStr) ? " selected" : "") + ">🧖‍♀️ Spa & Recovery</option>");
+        out.println("                <option value=\"YOGA_MOBILITY\"" + ("YOGA_MOBILITY".equalsIgnoreCase(typeStr) ? " selected" : "") + ">🧘 Yoga & Mobility</option>");
         out.println("            </select>");
         out.println("        </div>");
 
@@ -143,7 +145,8 @@ public class ClientServlet extends HttpServlet {
                 out.println("        <div>");
                 out.println("            <div class=\"card-header\">");
                 out.println("                <h3 class=\"card-title\">" + HtmlRenderer.escape(p.getTitle()) + "</h3>");
-                out.println("                <span class=\"badge badge-" + p.getPlanType().name().toLowerCase() + "\">" + p.getPlanType() + "</span>");
+                String badgeClass = (p.getPlanType() == PlanType.SPA_WELLNESS) ? "badge-spa" : ("badge-" + p.getPlanType().name().toLowerCase());
+                out.println("                <span class=\"badge " + badgeClass + "\">" + p.getPlanType() + "</span>");
                 out.println("            </div>");
                 out.printf("            <p class=\"card-desc\">%s</p>%n", HtmlRenderer.escape(p.getDescription()));
                 out.println("            <div class=\"card-meta-list\">");

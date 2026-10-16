@@ -3,7 +3,9 @@ package com.fitness.model;
 public enum PlanType {
     STRENGTH("Strength & Muscle Building"),
     CARDIO("Cardiovascular Endurance"),
-    HIIT("High-Intensity Interval Training");
+    HIIT("High-Intensity Interval Training"),
+    SPA_WELLNESS("Spa & Recovery Wellness"),
+    YOGA_MOBILITY("Yoga, Mobility & Flexibility");
 
     private final String description;
 

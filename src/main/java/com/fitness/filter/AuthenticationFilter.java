@@ -31,8 +31,8 @@ public class AuthenticationFilter implements Filter {
         String uri = req.getRequestURI();
         metricsManager.recordRequest(uri);
 
-        // Public resources, auth endpoints, and API health checks
-        if (uri.startsWith("/auth") || uri.startsWith("/api") || uri.startsWith("/public") || uri.equals("/favicon.ico") || uri.equals("/")) {
+        // Public resources, auth endpoints, spa showcase, exercise catalog, and API health checks
+        if (uri.startsWith("/auth") || uri.startsWith("/api") || uri.startsWith("/public") || uri.equals("/favicon.ico") || uri.equals("/") || uri.startsWith("/spa") || uri.startsWith("/exercises") || uri.equals("/slots")) {
             chain.doFilter(request, response);
             return;
         }

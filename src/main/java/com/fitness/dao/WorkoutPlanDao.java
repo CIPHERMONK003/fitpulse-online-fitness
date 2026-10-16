@@ -87,6 +87,18 @@ public class WorkoutPlanDao implements GenericDao<WorkoutPlan, Integer> {
                     ps.setInt(5, hiit.getIntensityRating());
                     ps.executeUpdate();
                 }
+            } else if (plan instanceof SpaWellnessPlan spa) {
+                String subSql = "INSERT INTO spa_plans (plan_id, spa_category, relaxation_score, benefits, room_type, temperature_c, aromatherapy_oil) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(subSql)) {
+                    ps.setInt(1, spa.getId());
+                    ps.setString(2, spa.getSpaCategory());
+                    ps.setInt(3, spa.getRelaxationScore());
+                    ps.setString(4, spa.getBenefits());
+                    ps.setString(5, spa.getRoomType());
+                    ps.setDouble(6, spa.getTemperatureCelsius());
+                    ps.setString(7, spa.getAromatherapyOil());
+                    ps.executeUpdate();
+                }
             }
 
             conn.commit();
@@ -378,8 +390,39 @@ public class WorkoutPlanDao implements GenericDao<WorkoutPlan, Integer> {
                 p.setCreatedAt(createdAt);
                 return p;
             }
-            default:
-                return null;
+            case SPA_WELLNESS: {
+                String subSql = "SELECT * FROM spa_plans WHERE plan_id = ?";
+                try (PreparedStatement ps = conn.prepareStatement(subSql)) {
+                    ps.setInt(1, id);
+                    try (ResultSet subRs = ps.executeQuery()) {
+                        if (subRs.next()) {
+                            SpaWellnessPlan p = new SpaWellnessPlan(
+                                    id, coachId, coachName, title, desc, level, durationWeeks, estMinutes, baseCalories,
+                                    subRs.getString("spa_category"),
+                                    subRs.getInt("relaxation_score"),
+                                    subRs.getString("benefits"),
+                                    subRs.getString("room_type"),
+                                    subRs.getDouble("temperature_c"),
+                                    subRs.getString("aromatherapy_oil")
+                            );
+                            p.setActive(active);
+                            p.setCreatedAt(createdAt);
+                            return p;
+                        }
+                    }
+                }
+                SpaWellnessPlan p = new SpaWellnessPlan(id, coachId, coachName, title, desc, level, durationWeeks, estMinutes, baseCalories,
+                        "Thermal Spa & Massage", 9, "Deep Tissue Recovery", "Hydrotherapy Suite", 38.5, "Eucalyptus");
+                p.setActive(active);
+                p.setCreatedAt(createdAt);
+                return p;
+            }
+            default: {
+                StrengthWorkoutPlan p = new StrengthWorkoutPlan(id, coachId, coachName, title, desc, level, durationWeeks, estMinutes, baseCalories, "Full Body", 3, 10, 60);
+                p.setActive(active);
+                p.setCreatedAt(createdAt);
+                return p;
+            }
         }
     }
 }

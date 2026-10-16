@@ -61,6 +61,11 @@ public class FitnessAppServer {
             context.addServlet(new ServletHolder(new CoachServlet()), "/coach/*");
             context.addServlet(new ServletHolder(new AdminServlet()), "/admin/*");
             context.addServlet(new ServletHolder(new ApiServlet()), "/api/*");
+            context.addServlet(new ServletHolder(new SlotBookingServlet()), "/slots/*");
+            context.addServlet(new ServletHolder(new SlotBookingServlet()), "/slots");
+            context.addServlet(new ServletHolder(new SlotBookingServlet()), "/spa");
+            context.addServlet(new ServletHolder(new ExerciseServlet()), "/exercises/*");
+            context.addServlet(new ServletHolder(new ExerciseServlet()), "/exercises");
 
             // 6. Graceful Shutdown Hook
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {

@@ -118,7 +118,13 @@ public class DashboardServlet extends HttpServlet {
         out.printf("        <span class=\"stat-value\" style=\"font-size: 1.3rem;\">%s</span>%n",
                 client.getAssignedCoachName() != null ? HtmlRenderer.escape(client.getAssignedCoachName()) : "Self-Guided");
         out.println("        <span class=\"stat-meta\">Personal Mentor</span>");
-        out.println("    </div>");
+        out.println("</div>");
+
+        // Fast Action Buttons: Spa, Slot Booking, Exercise Library
+        out.println("<div style=\"display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;\">");
+        out.println("    <a href=\"/slots\" class=\"btn btn-primary\">📅 Book Live Training & Spa Slots</a>");
+        out.println("    <a href=\"/spa\" class=\"btn btn-outline\" style=\"border-color: #f472b6; color: #f472b6;\">🧖‍♀️ Spa & Thermal Recovery</a>");
+        out.println("    <a href=\"/exercises\" class=\"btn btn-outline\">📖 Interactive Exercise Library</a>");
         out.println("</div>");
 
         // Two Column: Quick Log Workout + Active Enrolled Plans
