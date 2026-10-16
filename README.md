@@ -1,6 +1,6 @@
 # FitPulse - Online Fitness Coaching Enterprise Platform
 
-> 🌐 **Live Global Prototype**: [https://governments-powell-idea-pine.trycloudflare.com](https://governments-powell-idea-pine.trycloudflare.com)  
+> 🌐 **Live Global Prototype**: [https://sam-framing-quantities-fruit.trycloudflare.com](https://sam-framing-quantities-fruit.trycloudflare.com)  
 > ☕ **Language**: Java 17+ (No TypeScript used - 100% Pure Java Backend with Dynamic Web Servlets & Responsive HTML5/CSS3)  
 > 🏛️ **Architecture**: Model-View-Controller (MVC) • Generic DAO Pattern • Embedded Jetty Web Server • H2 & Neon PostgreSQL JDBC Engine • Multithreaded Worker Core  
 
