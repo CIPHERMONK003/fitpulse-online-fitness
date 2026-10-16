@@ -4,6 +4,21 @@
 > ☕ **Language**: Java 17+ (No TypeScript used - 100% Pure Java Backend with Dynamic Web Servlets & Responsive HTML5/CSS3)  
 > 🏛️ **Architecture**: Model-View-Controller (MVC) • Generic DAO Pattern • Embedded Jetty Web Server • H2 & Neon PostgreSQL JDBC Engine • Multithreaded Worker Core  
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/CIPHERMONK003/fitpulse-online-fitness)
+
+### 🚀 24/7 Online Deployment (Zero PC Dependency)
+To keep FitPulse accessible online 24/7 even when your personal computer is turned off or in sleep mode:
+1. Click the **Deploy to Render** button above or log into [Render.com](https://render.com) with GitHub.
+2. Select **New +** $\rightarrow$ **Blueprint** $\rightarrow$ choose `CIPHERMONK003/fitpulse-online-fitness`.
+3. Render automatically builds the included `Dockerfile` and gives you a permanent 24/7 HTTPS URL (e.g. `https://fitpulse-fitness-platform.onrender.com`).
+
+### 🖥️ Windows Silent Background Runner (Local PC)
+If running locally on your Windows machine, FitPulse includes zero-window background runners:
+- `start-silent.vbs`: Starts the server and tunnel completely silently in the background (no open terminal window).
+- `install-startup.bat`: Registers FitPulse into Windows Startup so it starts silently every time your PC boots.
+- `stop-background.bat`: Stops all background server and tunnel processes.
+
+
 ---
 
 ## 📋 Marking Rubric Mapping & Evidence
